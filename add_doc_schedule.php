@@ -1,36 +1,27 @@
 <?php
-include'connection.php';
+include 'connection.php';
 session_start();
+$log=$_SESSION['login_id'];
+$hosp=mysqli_query($conn,"SELECT * from hospital_tb WHERE login_id='$log'");
 
-require '../src/Fernet.php';
-require '../src/Exception.php';
-require '../src/InvalidTokenException.php';
-require '../src/TypeException.php';
-require '../src/FernetMsgpack.php';
+$h=mysqli_fetch_assoc($hosp);
 
-use Fernet\Fernet;
-use Fernet\InvalidTokenException;
+$hos=$h['hospital_id'];
+
 
 if(isset($_POST['sub']))
 {
-    $h_name=$_POST['hospital'];
-    $contact_num=$_POST['contact'];
-    $addr=$_POST['address'];
-    $user=$_POST['username'];
-    $pass=$_POST['pass_word'];
-
-    $key = Fernet::generateKey();
-    // $_SESSION['key']=$key;
-    $fernet = new Fernet($key); // or new FernetMsgpack($key);
+    $doc_name=$_POST['doctorname'];
     
-    $encryptpass = $fernet->encode($pass);
+    $doc_avldays=$_POST['avl_days'];
+   
+    $doc_s_time=$_POST['start_time'];
+    $doc_e_time=$_POST['end_time'];
+    
 
-    mysqli_query($conn,"INSERT INTO login_tb(username,password,role,key_pass) VALUES('$user','$encryptpass','1','$key') ");
-      $last_login_id=mysqli_insert_id($conn);
+   mysqli_query($conn,"INSERT INTO doc_schedule_tb(`doctor_id`, `hospital_id`, `start_time`, `end_time`) VALUES('$doc_name','$hos','$doc_s_time','$doc_e_time')");
 
-   mysqli_query($conn,"INSERT INTO hospital_tb(login_id,hospital_name,address,contact_no)VALUES('$last_login_id','$h_name','$addr','$contact_num')");
-
-           echo "<script> alert(' hospital added'); </script>";
+           echo "<script> alert('doctor added'); </script>";
 
            
            echo "<script> window.location.href='index.php';</script>";  
@@ -49,7 +40,7 @@ if(isset($_POST['sub']))
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
-    <title>ADD HOSPITAL</title>
+    <title>ADD DOCTOR</title>
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/fullcalendar.min.css">
@@ -70,7 +61,7 @@ if(isset($_POST['sub']))
             <div class="content">
                <div class="row">
                     <div class="col-sm-12">
-                        <h4 class="page-title">ADD HOSPITAL</h4>
+                        <h4 class="page-title">ADD DOCTOR SCHEDULE</h4>
                     </div>
                 </div>
           
@@ -82,39 +73,41 @@ if(isset($_POST['sub']))
                                     <div class="col-md-12">
                                         <h4 class="card-title"></h4>
 
-                                   
+                                       
                                         <div class="form-group">
-                                                <label>Hospital Name:</label>
-                                                <input type="text" name="hospital" class="form-control" required>
-                                        </div>
-                                        <div class="form-group">
-                            <label>Address</label>
-                            <textarea placeholder="Enter Address" name="address" class="form-control" required></textarea> 
+                                        <label>Doctor Name:</label>
+                                   <select id="doc_name" name="doctorname" class="form-control">
+                                   <option value=""></option>
+                               <?php
+                               include'connection.php';
+                               session_start();
+                               $login=$_SESSION['login_id'];
+                                    $hosp= mysqli_query($conn,"SELECT * FROM hospital_tb WHERE login_id='$login'");
+                                    $row1=mysqli_fetch_assoc($hosp);
+                                    $hos=$row1['hospital_id'];
+                               $query="SELECT * FROM `doctor_tb`WHERE hospital_id='$hos' ORDER BY `doc_name`";
+                               $result= mysqli_query($conn,$query) or die(mysqli_query($conn));
+                               while ($obj=mysqli_fetch_object($result))
+                               {
+                                  echo "<option value=\"$obj->doctor_id\">$obj->doc_name</option>";
+
+                               }
+                               ?>
+                               </select>
                         </div>
 
+                        
+
+                                        <div class="form-group">
+                                                <label>starting time:</label>
+                                                <input type="text" name="start_time" class="form-control" required>
+                                        </div>
+                                        <div class="form-group">
+                                                <label>End time:</label>
+                                                <input type="text" name="end_time" class="form-control" required>
+                                        </div>
                                         
-
-                                        <div class="form-group">
-                                                <label>Contact:</label>
-                                                <input type="text" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');" name="contact" class="form-control" required>
-                                        </div>
-
-                                       
-                                          <div class="form-group">
-                                                <label>username:</label>
-                                                <input type="text" name="username" class="form-control" required>
-                                        </div>
-
-
-                                      
-
-
-                                        <div class="form-group">
-                                                <label>Password:</label>
-                                                <input type="text" name="pass_word" class="form-control" required>
-                                        </div>
-
-                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                    
                                 <div class="text-center">
                                     <button type="submit" name="sub" class="btn btn-primary">Submit</button>
                                 </div>
