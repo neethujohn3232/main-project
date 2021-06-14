@@ -1,6 +1,7 @@
 <?php
 include 'connection.php';
 session_start();
+
 ?>
 
 <!DOCTYPE html>
@@ -12,7 +13,7 @@ session_start();
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
-    <title>VIEW PATIENTS</title>
+    <title>VIEW lab </title>
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap4.min.css">
@@ -33,7 +34,7 @@ session_start();
             <div class="content">
                 <div class="row">
                     <div class="col-sm-4 col-3">
-                        <h4 class="page-title">Hospital Details</h4>
+                        <h4 class="page-title">Details</h4>
                     </div>
                   
                 </div>
@@ -44,30 +45,45 @@ session_start();
                             <table class="table table-striped custom-table">
                                 <thead>
                                     <tr>
-                                        <th style="min-width:200px;">Hospital Name</th>
-                                        <th>Address</th>
-                                        <th>Contact</th>                    
-                                                      
-                                       <th class="text-center">Action</th>
+                                        <th>Sl-no</th>
+                                        <th style="min-width:200px;">Name</th>  
+                                        <th>Phone</th> 
+                                        <th>Test</th>
+                                       
+                                        <th>time</th>                                  
+                                       
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
+                                    $login=$_SESSION['login_id'];
+                                    $query_hospital=mysqli_query($conn,"SELECT * FROM hospital_tb WHERE login_id='$login'");
+                                    $row_data=mysqli_fetch_assoc($query_hospital);
+                                    $hospital_id=$row_data['hospital_id'];
 
-                                     $query=mysqli_query($conn,"SELECT * FROM hospital_tb");
-                                     while ($row=mysqli_fetch_assoc($query)) {
-                                        
+                                    $date=date('Y-m-d');
+
+
+                                     $query=mysqli_query($conn,"SELECT * FROM lab_booking_tb JOIN 
+                                     registration_tb ON lab_booking_tb.reg_id=registration_tb.reg_id JOIN 
+                                     lab_test ON lab_booking_tb.test_id=lab_test.test_id");
+                                     $count=0;
+                                     while ($row=mysqli_fetch_assoc($query)) { 
+                                        $count++;
                                     ?>
                                    
                                     <tr>
                                         <td>
-											<h2><?php echo $row['hospital_name'];?></h2>
+											<h2><?php echo $count;?></h2>
 										</td>
-                                       <td><?php echo $row['address'];?></td>
-                                       <td><?php echo $row['contact_no'];?></td>
+                                       <td><?php echo $row['name'];?></td>
+                                       <td><?php echo $row['phone'];?></td>
+                                       <td><?php echo $row['test_name'];?></td>
+                                       <td><?php echo $row['test_time'];?></td>
+                                       
 
 
-                                        <td class="text-center">
+                                      <!--   <td class="text-center"> -->
                                             <!-- <div class="dropdown dropdown-action">
                                                 <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                                                 <div class="dropdown-menu dropdown-menu-right">
@@ -76,18 +92,19 @@ session_start();
                                                   
                                                 </div>
                                             </div> -->
-                                            <div class="dropdown action-label">
+                                           <!--  <div class="dropdown action-label">
                                                 <a class="custom-badge status-purple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                                                     ACTION
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="edit_hospital.php?edit_id=<?php echo $row['hospital_id'];?>">Edit</a>
-                                                    <a class="dropdown-item" href="delete_hospital.php?delete_id=<?php echo $row['hospital_id'];?>">Delete</a>
+                                                     <a class="dropdown-item custom-badge status-green" href="edit_lab.php?edit_id=<?php echo $row['test_id'];?>">Edit</a>
+                                                    
+                                                    <a class="dropdown-item custom-badge status-red" onclick="return confirm('Remove Doctor?')" href="delete_test.php?lab_id=<?php echo $row['test_id'];?>">Delete</a>
                                                     
                                                     
                                                 </div>
                                             </div>
-                                        </td>
+                                        </td> -->
                                     </tr> 
                                    <?php } ?>                        																											
                                 </tbody>

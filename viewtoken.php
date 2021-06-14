@@ -1,6 +1,7 @@
 <?php
 include 'connection.php';
 session_start();
+
 ?>
 
 <!DOCTYPE html>
@@ -12,7 +13,7 @@ session_start();
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
-    <title>VIEW PATIENTS</title>
+    <title>VIEW DOCTORS</title>
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap4.min.css">
@@ -28,12 +29,12 @@ session_start();
 <body>
     <div class="main-wrapper">
        <?php include 'include/header.php'?>
-        <?php include 'include/sidebar.php'?>
+       <?php include 'include/sidebar.php'?>
         <div class="page-wrapper">
             <div class="content">
                 <div class="row">
                     <div class="col-sm-4 col-3">
-                        <h4 class="page-title">Hospital Details</h4>
+                        <h4 class="page-title"> Details</h4>
                     </div>
                   
                 </div>
@@ -44,29 +45,38 @@ session_start();
                             <table class="table table-striped custom-table">
                                 <thead>
                                     <tr>
-                                        <th style="min-width:200px;">Hospital Name</th>
-                                        <th>Address</th>
-                                        <th>Contact</th>                    
-                                                      
-                                       <th class="text-center">Action</th>
+                                        <th>booking_id</th>
+                                        <th>schedule_id</th>
+                                        <th>reg_id</th>
+                                        <th>token_no</th>
+                                        <th>time</th>
+                                        
+
+                                       
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-
-                                     $query=mysqli_query($conn,"SELECT * FROM hospital_tb");
-                                     while ($row=mysqli_fetch_assoc($query)) {
-                                        
+                                    
+                                    $query=mysqli_query($conn,"SELECT * FROM booking_tb ");
+                                      
+                                    //     $row_data=mysqli_fetch_assoc($query_hospital);
+                                    //     $scheduled_id=$row_data['schedule_id'];
+                                    //     $query=mysqli_query($conn,"SELECT * FROM doctor_schedule_tb WHERE schedule_id='$scheduled_id'");
+                                    //  $count=0;
+                                     while ($row=mysqli_fetch_assoc($query)) { 
+                                    //     $count++;
+      
                                     ?>
                                    
                                     <tr>
-                                        <td>
-											<h2><?php echo $row['hospital_name'];?></h2>
-										</td>
-                                       <td><?php echo $row['address'];?></td>
-                                       <td><?php echo $row['contact_no'];?></td>
-
-
+                                       
+                                        <td><?php echo $row['booking_id'];?></td>
+                                        <td><?php echo $row['schedule_id'];?></td>
+                                       <td><?php echo $row['reg_id'];?></td>
+                                       <td><?php echo $row['token_no'];?></td>
+                                       <td><?php echo $row['time'];?></td>
+                                     
                                         <td class="text-center">
                                             <!-- <div class="dropdown dropdown-action">
                                                 <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
@@ -78,14 +88,15 @@ session_start();
                                             </div> -->
                                             <div class="dropdown action-label">
                                                 <a class="custom-badge status-purple dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                                    ACTION
+                                                    ADD TIME
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="edit_hospital.php?edit_id=<?php echo $row['hospital_id'];?>">Edit</a>
-                                                    <a class="dropdown-item" href="delete_hospital.php?delete_id=<?php echo $row['hospital_id'];?>">Delete</a>
+                                                     <a class="dropdown-item custom-badge status-green" href="addtime.php?edit_id=<?php echo $row['booking_id'];?>">Addtimeslot</a>
                                                     
                                                     
                                                 </div>
+                                            </div>
+                                   
                                             </div>
                                         </td>
                                     </tr> 

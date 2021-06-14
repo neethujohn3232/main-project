@@ -1,6 +1,7 @@
 <?php
 include 'connection.php';
 session_start();
+
 ?>
 
 <!DOCTYPE html>
@@ -12,7 +13,7 @@ session_start();
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
-    <title>VIEW PATIENTS</title>
+    <title>VIEW DEPARTMENT</title>
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/dataTables.bootstrap4.min.css">
@@ -33,7 +34,7 @@ session_start();
             <div class="content">
                 <div class="row">
                     <div class="col-sm-4 col-3">
-                        <h4 class="page-title">Hospital Details</h4>
+                        <h4 class="page-title">Department Details</h4>
                     </div>
                   
                 </div>
@@ -44,27 +45,30 @@ session_start();
                             <table class="table table-striped custom-table">
                                 <thead>
                                     <tr>
-                                        <th style="min-width:200px;">Hospital Name</th>
-                                        <th>Address</th>
-                                        <th>Contact</th>                    
-                                                      
+                                        <th>Sl-no</th>
+                                        <th style="min-width:200px;">Department Name</th>                                     
                                        <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
+                                    $login=$_SESSION['login_id'];
+                                    $query_hospital=mysqli_query($conn,"SELECT * FROM hospital_tb WHERE login_id='$login'");
+                                    $row_data=mysqli_fetch_assoc($query_hospital);
+                                    $hospital_id=$row_data['hospital_id'];
 
-                                     $query=mysqli_query($conn,"SELECT * FROM hospital_tb");
-                                     while ($row=mysqli_fetch_assoc($query)) {
-                                        
+                                     $query=mysqli_query($conn,"SELECT * FROM department_tb WHERE hospital_id='$hospital_id'");
+                                     $count=0;
+                                     while ($row=mysqli_fetch_assoc($query)) { 
+                                        $count++;
                                     ?>
                                    
                                     <tr>
                                         <td>
-											<h2><?php echo $row['hospital_name'];?></h2>
+											<h2><?php echo $count;?></h2>
 										</td>
-                                       <td><?php echo $row['address'];?></td>
-                                       <td><?php echo $row['contact_no'];?></td>
+                                       <td><?php echo $row['department_name'];?></td>
+                                       
 
 
                                         <td class="text-center">
@@ -81,8 +85,8 @@ session_start();
                                                     ACTION
                                                 </a>
                                                 <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="edit_hospital.php?edit_id=<?php echo $row['hospital_id'];?>">Edit</a>
-                                                    <a class="dropdown-item" href="delete_hospital.php?delete_id=<?php echo $row['hospital_id'];?>">Delete</a>
+                                                    
+                                                    <a class="dropdown-item custom-badge status-red" onclick="return confirm('Delete Department?')" href="delete_department.php?delete_id=<?php echo $row['department_id'];?>">Delete</a>
                                                     
                                                     
                                                 </div>

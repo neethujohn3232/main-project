@@ -1,26 +1,33 @@
 <?php
 include 'connection.php';
 session_start();
-$hospital=$_GET['edit_id'];
-$hospital_query=mysqli_query($conn,"SELECT * FROM hospital_tb WHERE hospital_id='$hospital'");
-$hospital_data=mysqli_fetch_assoc($hospital_query);
+// $login=$_SESSION['login_id'];
+// $query_hospital=mysqli_query($conn,"SELECT * FROM hospital_tb WHERE login_id='$login'");
+// $row_data=mysqli_fetch_assoc($query_hospital);
+// $hospital_id=$row_data['hospital_id'];
 
+$book_id=$_GET['edit_id'];
+
+// $query_doc=mysqli_query($conn,"SELECT * FROM boking_tb WHERE doctor_id='$doc_id'");
+
+// $doc_data=mysqli_fetch_assoc($query_doc);
 
 if(isset($_POST['sub']))
 {
-    @$h_name=$_POST['hospital'];
-    @$contact_num=$_POST['contact'];
-    @$addr=$_POST['address'];
+    
+    $time=$_POST['time'];
+
    
 
-    
+    mysqli_query($conn,"UPDATE booking_tb SET time='$time' WHERE booking_id='$book_id'");
 
-   mysqli_query($conn,"UPDATE hospital_tb SET hospital_name='$h_name',address='$addr',contact_no='$contact_num' WHERE hospital_id='$hospital'");
 
-           echo "<script> alert('Details updated!'); </script>";
+   
+
+           echo "<script> alert('Details updated'); </script>";
 
            
-           echo "<script> window.location.href='view_hospital.php';</script>";  
+           echo "<script> window.location.href='viewtoken.php';</script>";  
 }
 
 
@@ -36,7 +43,7 @@ if(isset($_POST['sub']))
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
-    <title>EDIT HOSPITAL </title>
+    <title>EDIT DOCTOR</title>
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/fullcalendar.min.css">
@@ -57,7 +64,7 @@ if(isset($_POST['sub']))
             <div class="content">
                <div class="row">
                     <div class="col-sm-12">
-                        <h4 class="page-title">EDIT HOSPITAL DETAILS</h4>
+                        <h4 class="page-title">EDIT </h4>
                     </div>
                 </div>
           
@@ -67,32 +74,18 @@ if(isset($_POST['sub']))
                             <div class="card-box">
                                
                                     <div class="col-md-12">
-                                        <h4 class="card-title">Form</h4>
+                                        <h4 class="card-title"></h4>
 
                                        
                                         <div class="form-group">
-                                                <label>Hospital Name:</label>
-                                                <input type="text" name="hospital" value="<?php echo $hospital_data['hospital_name'];?>" class="form-control" required>
+                                                <label>Time:</label><span style="color: white; background-color: red;" id="spname"></span>
+                                                <input type="text" id="time"  name="time" class="form-control" >
                                         </div>
-                                        <div class="form-group">
-                            <label>Address</label>
-                            <textarea placeholder="Enter Address"  name="address" class="form-control" required><?php echo $hospital_data['address'];?></textarea> 
-                        </div>
-
-                                        
-
-                                        <div class="form-group">
-                                                <label>Contact:</label>
-                                                <input type="text" maxlength="10" value="<?php echo $hospital_data['contact_no'];?>" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');" name="contact" class="form-control" required>
-                                        </div>
-
-                                       
                                          
+                                       </div> 
 
-                                                                                                                                                                                                                                                                                                    
-                                <div class="text-center">
-                                    <button type="submit" name="sub" class="btn btn-primary">Update</button>
-                                </div>
+                                             <button type="submit"  name="sub" class="btn btn-primary">Update</button>
+                                        </div>
                                   </div>
                             </div>
                         </form>
@@ -109,6 +102,35 @@ if(isset($_POST['sub']))
     <script src="assets/js/jquery.slimscroll.js"></script>
     <script src="assets/js/select2.min.js"></script>
     <script src="assets/js/app.js"></script>
+     <script>
+        function validate()
+        {
+            var name=document.getElementById("name_id").value;
+            var qualification=document.getElementById("qua_id").value;
+             var place=document.getElementById("add_id").value;
+
+            if(name=="")
+            {
+                document.getElementById('spname').innerHTML="* empty field";
+                return false;
+            }
+              if(qualification=="")
+            {
+                document.getElementById('spqua').innerHTML="* empty field";
+                return false;
+            }
+             if(place=="")
+            {
+                document.getElementById('spadd').innerHTML="* empty field";
+                return false;
+            }
+
+        }
+        function clrmsg(p)
+        {
+            document.getElementById(p).innerHTML="";
+        }
+    </script>
 </body>
 
 

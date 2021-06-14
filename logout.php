@@ -1,10 +1,10 @@
 <?php
 session_start();
 
-$_SESSION['role']="";
-$_SESSION['login_id']="";
+$_SESSION["login_id"]="";
+$_SESSION["role"]="";
 
 session_destroy();
 
-header("location: loginpanel/login.php");
+header("location:login.php");
 ?>

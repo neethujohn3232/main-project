@@ -6,27 +6,30 @@ $query_hospital=mysqli_query($conn,"SELECT * FROM hospital_tb WHERE login_id='$l
 $row_data=mysqli_fetch_assoc($query_hospital);
 $hospital_id=$row_data['hospital_id'];
 
+$doc_id=$_GET['edit_id'];
 
+$query_doc=mysqli_query($conn,"SELECT * FROM doctor_tb WHERE doctor_id='$doc_id'");
 
+$doc_data=mysqli_fetch_assoc($query_doc);
 
 if(isset($_POST['sub']))
 {
-    $d_name=$_POST['doc_name'];
-    $quali=$_POST['qualific'];
-    $dep_id=$_POST['department'];
-    $addr=$_POST['address'];
+    @$d_name=$_POST['doc_name'];
+    @$quali=$_POST['qualific'];
+    @$dep_id=$_POST['department'];
+    @$addr=$_POST['address'];
 
    
 
-    mysqli_query($conn,"INSERT INTO doctor_tb (hospital_id,department_id,doc_name,qualification,place) VALUES ('$hospital_id','$dep_id','$d_name','$quali','$addr')");
+    mysqli_query($conn,"UPDATE doctor_tb SET department_id='$dep_id',doc_name='$d_name',qualification='$quali',place='$addr' WHERE doctor_id='$doc_id'");
 
 
    
 
-           echo "<script> alert('Doctor Registration completed'); </script>";
+           echo "<script> alert('Details updated'); </script>";
 
            
-           echo "<script> window.location.href='add_doctor.php';</script>";  
+           echo "<script> window.location.href='view_doctor.php';</script>";  
 }
 
 
@@ -42,7 +45,7 @@ if(isset($_POST['sub']))
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
-    <title>ADD DOCTOR</title>
+    <title>EDIT DOCTOR</title>
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/fullcalendar.min.css">
@@ -63,7 +66,7 @@ if(isset($_POST['sub']))
             <div class="content">
                <div class="row">
                     <div class="col-sm-12">
-                        <h4 class="page-title">ADD DOCTOR</h4>
+                        <h4 class="page-title">EDIT DOCTOR</h4>
                     </div>
                 </div>
           
@@ -78,16 +81,16 @@ if(isset($_POST['sub']))
                                        
                                         <div class="form-group">
                                                 <label>Name:</label><span style="color: white; background-color: red;" id="spname"></span>
-                                                <input type="text" id="name_id" onkeyup="clrmsg('spname')" name="doc_name" class="form-control" >
+                                                <input type="text" id="name_id" value="<?php echo $doc_data['doc_name'];?>" onkeyup="clrmsg('spname')" name="doc_name" class="form-control" >
                                         </div>
                                          <div class="form-group">
                                                 <label>Qualification:</label><span style="color: white; background-color: red;" id="spqua"></span>
-                                                <input type="text" id="qua_id" onkeyup="clrmsg('spqua')" name="qualific" class="form-control" >
+                                                <input type="text" id="qua_id" value="<?php echo $doc_data['qualification'];?>" onkeyup="clrmsg('spqua')" name="qualific" class="form-control" >
                                         </div>
                                         <div class="form-group">
                                             <label>Department:</label>
                                             <select class="select" name="department"  required>
-                                                 <option>Select Department</option>
+                                                 <option value="<?php echo $doc_data['department_id '];?>"><?php echo $doc_data['department_id'];?></option>
                                                 <?php 
                                                 $query_depart=mysqli_query($conn,"SELECT * FROM department_tb WHERE hospital_id='$hospital_id'");
                                                 while($row1=mysqli_fetch_assoc($query_depart))
@@ -100,9 +103,9 @@ if(isset($_POST['sub']))
 
                                         <div class="form-group">
                                             <label>Place</label><span style="color: white; background-color: red;" id="spadd"></span>
-                                            <textarea placeholder="Enter Address" id="add_id" onkeyup="clrmsg('spadd')" name="address" class="form-control" ></textarea>
+                                            <textarea placeholder="Enter Address" id="add_id" onkeyup="clrmsg('spadd')" name="address" class="form-control" ><?php echo $doc_data['place'];?></textarea>
                                         <div class="text-center mt-3" >
-                                            <button type="submit" onclick="return validate()" name="sub" class="btn btn-primary">Submit</button>
+                                            <button type="submit" onclick="return validate()" name="sub" class="btn btn-primary">Update</button>
                                         </div>
                                   </div>
                             </div>

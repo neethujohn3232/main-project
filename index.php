@@ -2,13 +2,12 @@
 include 'connection.php';
 session_start();
 
-if ($_SESSION['role']=='1')
-{
+if($_SESSION['role']=='1'){
  $login=$_SESSION['login_id'];
  $query_hospital=mysqli_query($conn,"SELECT * FROM hospital_tb WHERE login_id='$login'");
  $row_data=mysqli_fetch_assoc($query_hospital);
  $hospital_id=$row_data['hospital_id'];
- 
+ $query=mysqli_query($conn,"SELECT * FROM doctor_tb WHERE hospital_id='$hospital_id'");
 }
 ?>
 
@@ -50,8 +49,30 @@ if ($_SESSION['role']=='1')
                             </div>
                             <div class="card-body">
                                 <ul class="contact-list">
+                                   <?php
+                                    
+                                     while ($row=mysqli_fetch_assoc($query)) { 
+                                       
+                                    ?>
+
+                                    <li>
+                                        <div class="contact-cont">
+                                            <div class="float-left user-img m-r-10">
+                                                <a title="John Doe"><img src="assets/img/user.jpg" alt="" class="w-40 rounded-circle"><span class="status online"></span></a>
+                                            </div>
+                                            <div class="contact-info">
+                                                <span class="contact-name text-ellipsis"><?php echo $row['doc_name'];?></span>
+                                                <span class="contact-date"><?php echo $row['qualification'];?></span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                   
+                                   <?php } ?>
+                                 
+                                </ul>
+                            </div>
                             <div class="card-footer text-center bg-white">
-                                <a href="view_doctor.php" class="text-muted"></a>
+                                <a href="view_doctor.php" class="text-muted">View all Doctors</a>
                             </div>
                         </div>
                     </div>

@@ -1,27 +1,26 @@
 <?php
-include 'connection.php';
+include'connection.php';
 session_start();
-$log=$_SESSION['login_id'];
-$hosp=mysqli_query($conn,"SELECT * from hospital_tb WHERE login_id='$log'");
+$login=$_SESSION['login_id'];
+$query_hospital=mysqli_query($conn,"SELECT * FROM hospital_tb WHERE login_id='$login'");
+$row_data=mysqli_fetch_assoc($query_hospital);
+$hospital_id=$row_data['hospital_id'];
 
-$h=mysqli_fetch_assoc($hosp);
-
-$hos=$h['hospital_id'];
 
 if(isset($_POST['sub']))
 {
-    $d_name=$_POST['department'];
+    $d_name=$_POST['dep'];
     
-    $d_description=$_POST['description'];
-   
-   
 
-   mysqli_query($conn,"INSERT INTO department_tb(hospital_id,department_name,dept_description) VALUES('$hos','$d_name','$d_description')");
+    mysqli_query($conn,"INSERT INTO department_tb(hospital_id,department_name) VALUES('$hospital_id','$d_name') ");
+      
 
-           echo "<script> alert('department added'); </script>";
+  
+
+           echo "<script> alert(' New department added'); </script>";
 
            
-           echo "<script> window.location.href='index.php';</script>";  
+           echo "<script> window.location.href='add_department.php';</script>";  
 }
 
 
@@ -37,7 +36,7 @@ if(isset($_POST['sub']))
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
-    <title>ADD HOSPITAL</title>
+    <title>ADD DEPARTMENT</title>
     <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/fullcalendar.min.css">
@@ -72,19 +71,12 @@ if(isset($_POST['sub']))
 
                                        
                                         <div class="form-group">
-                                                <label>Department Name:</label>
-                                                <input type="text" name="department" class="form-control" required>
+                                                <label>Department Name:</label><span style="color: white; background-color: red;" id="spdep"></span>
+                                                <input type="text" name="dep" id="dep_id" onkeyup="clrmsg('spdep')" class="form-control" >
                                         </div>
-
-                                        <div class="form-group">
-                                <label>Description</label>
-                                <textarea cols="30" rows="4" class="form-control" name="description"></textarea>
-                            </div>
-                            
-                                        
-                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                        
                                 <div class="text-center">
-                                    <button type="submit" name="sub" class="btn btn-primary">Submit</button>
+                                    <button type="submit" name="sub" onclick="return validate()" class="btn btn-primary">Submit</button>
                                 </div>
                                   </div>
                             </div>
@@ -102,6 +94,25 @@ if(isset($_POST['sub']))
     <script src="assets/js/jquery.slimscroll.js"></script>
     <script src="assets/js/select2.min.js"></script>
     <script src="assets/js/app.js"></script>
+    <script>
+        function validate()
+        {
+            var department=document.getElementById("dep_id").value;
+            
+
+            if(department=="")
+            {
+                document.getElementById('spdep').innerHTML="* empty field";
+                return false;
+            }
+           
+
+        }
+        function clrmsg(p)
+        {
+            document.getElementById(p).innerHTML="";
+        }
+    </script>
 </body>
 
 

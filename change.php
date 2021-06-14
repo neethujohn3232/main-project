@@ -1,32 +1,56 @@
 <?php
 include'connection.php';
 session_start();
+require '../src/Fernet.php';
+require '../src/Exception.php';
+require '../src/InvalidTokenException.php';
+require '../src/TypeException.php';
+require '../src/FernetMsgpack.php';
+
+use Fernet\Fernet;
+use Fernet\InvalidTokenException;
 $login=$_SESSION['login_id'];
-$query_hospital=mysqli_query($conn,"SELECT * FROM hospital_tb WHERE login_id='$login'");
-$row_data=mysqli_fetch_assoc($query_hospital);
-$hospital_id=$row_data['hospital_id'];
 
 
 
 
 if(isset($_POST['sub']))
 {
-    $d_name=$_POST['doc_name'];
-    $quali=$_POST['qualific'];
-    $dep_id=$_POST['department'];
-    $addr=$_POST['address'];
-
    
+    $new=$_POST['new'];
+    $retyped=$_POST['retype'];
+    
 
-    mysqli_query($conn,"INSERT INTO doctor_tb (hospital_id,department_id,doc_name,qualification,place) VALUES ('$hospital_id','$dep_id','$d_name','$quali','$addr')");
+    if($new==$retyped)
+    {
+            $key = Fernet::generateKey();
+            $fernet = new Fernet($key); // or new FernetMsgpack($key);
+
+            $token = $fernet->encode($retyped);
+
+            $message = $fernet->decode($token);
+           // var_dump($token,$message);exit();
+
+             mysqli_query($conn,"UPDATE login_tb SET password='$token',key_pass='$key' WHERE login_id='$login'");
 
 
-   
 
-           echo "<script> alert('Doctor Registration completed'); </script>";
+        echo "<script> alert('Password Changed'); </script>";
 
            
-           echo "<script> window.location.href='add_doctor.php';</script>";  
+          // echo "<script> window.location.href='add_doctor.php';</script>";
+
+    }
+    else{
+         echo "<script> alert('enter same password'); </script>";
+         echo "<script>window.history.back();</script>";
+    }
+   
+
+   
+   
+
+             
 }
 
 
@@ -63,7 +87,7 @@ if(isset($_POST['sub']))
             <div class="content">
                <div class="row">
                     <div class="col-sm-12">
-                        <h4 class="page-title">ADD DOCTOR</h4>
+                        <h4 class="page-title">Change Password</h4>
                     </div>
                 </div>
           
@@ -73,34 +97,22 @@ if(isset($_POST['sub']))
                             <div class="card-box">
                                
                                     <div class="col-md-12">
-                                        <h4 class="card-title">Form</h4>
+                                        <h4 class="card-title">change password</h4>
 
                                        
-                                        <div class="form-group">
-                                                <label>Name:</label><span style="color: white; background-color: red;" id="spname"></span>
-                                                <input type="text" id="name_id" onkeyup="clrmsg('spname')" name="doc_name" class="form-control" >
-                                        </div>
+                                       
                                          <div class="form-group">
-                                                <label>Qualification:</label><span style="color: white; background-color: red;" id="spqua"></span>
-                                                <input type="text" id="qua_id" onkeyup="clrmsg('spqua')" name="qualific" class="form-control" >
+                                                <label>New password:</label><span style="color: white; background-color: red;" id="spqua"></span>
+                                                <input type="text" id="n_pass" onkeyup="clrmsg('spqua')" name="new" class="form-control" >
                                         </div>
                                         <div class="form-group">
-                                            <label>Department:</label>
-                                            <select class="select" name="department"  required>
-                                                 <option>Select Department</option>
-                                                <?php 
-                                                $query_depart=mysqli_query($conn,"SELECT * FROM department_tb WHERE hospital_id='$hospital_id'");
-                                                while($row1=mysqli_fetch_assoc($query_depart))
-                                                { ?>
-                                               
-                                                <option value="<?php echo $row1['department_id']; ?>"><?php echo $row1['department_name']; ?></option>
-                                               <?php } ?>
-                                            </select>
-                                       </div> 
+                                                <label>Retype new password:</label><span style="color: white; background-color: red;" id="spqua"></span>
+                                                <input type="text" id="r_n_pass" onkeyup="clrmsg('spqua')" name="retype" class="form-control" >
+                                        </div>
+                                       
 
                                         <div class="form-group">
-                                            <label>Place</label><span style="color: white; background-color: red;" id="spadd"></span>
-                                            <textarea placeholder="Enter Address" id="add_id" onkeyup="clrmsg('spadd')" name="address" class="form-control" ></textarea>
+                                            
                                         <div class="text-center mt-3" >
                                             <button type="submit" onclick="return validate()" name="sub" class="btn btn-primary">Submit</button>
                                         </div>
@@ -123,21 +135,17 @@ if(isset($_POST['sub']))
      <script>
         function validate()
         {
-            var name=document.getElementById("name_id").value;
-            var qualification=document.getElementById("qua_id").value;
-             var place=document.getElementById("add_id").value;
 
-            if(name=="")
-            {
-                document.getElementById('spname').innerHTML="* empty field";
-                return false;
-            }
-              if(qualification=="")
+            var new_pass=document.getElementById("n_pass").value;
+             var retype=document.getElementById("r_n_pass").value;
+
+            
+              if(new_pass=="")
             {
                 document.getElementById('spqua').innerHTML="* empty field";
                 return false;
             }
-             if(place=="")
+             if(retype=="")
             {
                 document.getElementById('spadd').innerHTML="* empty field";
                 return false;
